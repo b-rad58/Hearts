@@ -1,3 +1,5 @@
+//create a play trick method
+
 import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 import java.util.Scanner;
@@ -5,13 +7,15 @@ import java.util.Scanner;
 //anything better than simple entry? Java does not have tuples, work around good enough for now
 public class Trick {
 	private Suits trump;
-	private SimpleEntry<Card, Player> highestCard;
-	private ArrayList<Card> trickCards;
+	private SimpleEntry<Card, Player> highestCard = null;
+	private ArrayList<Card> trickCards; //currently not added, do i need this?
 	private Scanner in;
-	//doesnt work logically. Cards are played one at a time, allowing players to see the cards previously played in that trick (as well as the trump, duh)
+	private Player trickWinner;
+	private Player[] players;
 	
-	
+	//logically does it make sense for the constructor to contain this much logic?
 	public Trick(Player[] players, int startPos) { //takes pairs <'card played', 'player that played the card;>
+		this.players = players;
 		trickCards = new ArrayList<Card>();
 		in = new Scanner(System.in);
 		
@@ -19,32 +23,39 @@ public class Trick {
 		int i;
 		for (int foo=0; foo<players.length; foo++) {
 			i = (foo + startPos) % players.length;
-			currentPlayer = (Player) players[i];
+			currentPlayer = players[i];
 			System.out.println(currentPlayer.getName() + "play a card: ");
 			System.out.println(currentPlayer.getHand());
 			Card currentCard = currentPlayer.playCard(in.nextInt());
-			this.trump = currentCard.getCardSuit();
-			this.highestCard = new SimpleEntry(currentCard, currentPlayer);
-			
-		
-		}
-		
-		this.trump = cardsPlayed[0].getKey().getCardSuit();
-		highestCard = new SimpleEntry<Card, Player>(cardsPlayed[0].getKey(),cardsPlayed[0].getValue());
-		for(SimpleEntry<Card, Player> card : cardsPlayed) {
-			trickCards.add(card.getKey());
-			if (card.getKey().getCardSuit().equals(trump)) {//check equals method is valid for comparing suits
-				if (card.getKey().getCardValue().getRank() > highestCard.getKey().getCardValue().getRank()) { //define 'greater than' for values
-					highestCard = card;
+			if (highestCard == null) {
+				this.trump = currentCard.getCardSuit();			//add player position so we know where to start next trick
+				this.highestCard = new SimpleEntry<Card, Player>(currentCard, currentPlayer);
+				
+			}
+			else { //check equals method for enumerated types
+				if (currentCard.getCardSuit().equals(trump)) {
+					if(currentCard.getCardValue().getRank() > highestCard.getKey().getCardValue().getRank()) {
+						highestCard = new SimpleEntry<Card, Player>(currentCard, currentPlayer);
+					}
+					
 				}
 			}
-		}//this code is super ugly. Abstract some shit away || just 1break up the lines to make it more readable
+		
+		}
+		this.trickWinner = highestCard.getValue();
+		System.out.println(highestCard);
+		//end of card playing
+		
+		
+	
 		
 	} // created a trick and the winner but Constructor cannot return the winner, maybe 
 	  // not need t
-
+	//this.getWinner()\\\\\\\\\
 	
-	
+	public Player getWinner() {
+		return trickWinner;
+	}
 	
 	public Trick(int numPlayers, Suits trump) {
 		this.trump = trump;
@@ -64,6 +75,15 @@ public class Trick {
 	
 	public ArrayList<Card> getTrickCards() {
 		return trickCards;
+	}
+	
+	public int twoOfClubs() {
+		Card twoClubs = new Card(Ranks.TWO, Suits.CLUBS);
+		for (int i=0; i<4; i++) {
+			if (this.players[i].getHand().contains(twoClubs))
+				return i;
+		}
+		return -1; //error
 	}
 
 }

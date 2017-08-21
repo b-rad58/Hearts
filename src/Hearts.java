@@ -41,23 +41,28 @@ public class Hearts {
 				p.pickUpCard(deck.dealCard());
 			}
 		}
-		for (Player p : players) {
+		/*for (Player p : players) { // show each players hand 
 			System.out.println(p.getHand());
-		}
+		}*/
 		
 		//Hearts.start(); figure out how you want to organize this later on+
-		int startPos = hearts.twoOfClubs();
+		
+		//trick code
+		/*int startPos = hearts.twoOfClubs(); //who starts the round
 		int i;
-		Player currentPlayer;
+		Player currentPlayer; //
 		for (int foo=0; foo<4; foo++) {
 			i = (foo + startPos) % 4;
 			currentPlayer = players[i];
-			System.out.println(currentPlayer.getName() + "play a card: ");
+			System.out.println(currentPlayer.getName() + " play a card: ");
 			System.out.println(currentPlayer.getHand());
 			currentPlayer.playCard(in.nextInt());		
 		
 			
-		}
+		}*/
+		
+		Trick currentTrick = new Trick(players, hearts.twoOfClubs());
+		
 		in.close();
 	}
 }

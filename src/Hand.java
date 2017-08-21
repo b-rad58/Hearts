@@ -62,9 +62,10 @@ public class Hand {
 	}
 	
 	public String toString() {
-		String str = "[";
+		String str = "";
 		for(Card c : this.hand) {
-			str = str + c + "], ";
+			str = str + ", [" + c + "]";
+			// add comma at end, after loop strip last char
 		}
 		return str;
 	}
