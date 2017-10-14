@@ -7,42 +7,57 @@ import java.util.Scanner;
 //anything better than simple entry? Java does not have tuples, work around good enough for now
 public class Trick {
 	private Suits trump;
-	private SimpleEntry<Card, Player> highestCard = null;
+	private SimpleEntry<Card, Player> highestCard = null; // static class in here
 	private ArrayList<Card> trickCards; //currently not added, do i need this?
-	private Scanner in;
-	private Player trickWinner;
+	private final Scanner in = new Scanner(System.in);
+	private int winnerPos;
 	private Player[] players;
+	private int startPos;
+	private int points;
 	
-	//logically does it make sense for the constructor to contain this much logic?
+	
+	//Trick takes card
+	
+	//public Trick(players) //Stack? Queue?  
+	
+	//logically does it make sense for the constructor to contain this much logic? NO IT DOES NOT
 	public Trick(Player[] players, int startPos) { //takes pairs <'card played', 'player that played the card;>
 		this.players = players;
+		this.startPos = startPos;
+		this.winnerPos = startPos;
 		trickCards = new ArrayList<Card>();
-		in = new Scanner(System.in);
 		
-		Player currentPlayer; //
-		int i;
-		for (int foo=0; foo<players.length; foo++) {
-			i = (foo + startPos) % players.length;
+		
+	}	
+		
+	public void play() {
+		Player currentPlayer;
+		int i;		
+		for (int foo=0; foo<players.length; foo++) { // Goes through turns
+			i = (foo + startPos) % players.length; //works from starting pos and goes through all players, in order
 			currentPlayer = players[i];
+			winnerPos = i; //reference for next Trick
 			System.out.println(currentPlayer.getName() + "play a card: ");
 			System.out.println(currentPlayer.getHand());
-			Card currentCard = currentPlayer.playCard(in.nextInt());
+			Card currentCard = currentPlayer.playCard(in.nextInt()); //play card by int position hand
+			if (currentCard.getCardSuit().equals(Suits.HEARTS)) //add points for hearts
+				points++;
+			else if (currentCard.getCardSuit().equals(Suits.SPADES) && currentCard.getCardValue().equals(Ranks.QUEEN)) //check for the bish
+				points += 13;
 			if (highestCard == null) {
 				this.trump = currentCard.getCardSuit();			//add player position so we know where to start next trick
 				this.highestCard = new SimpleEntry<Card, Player>(currentCard, currentPlayer);
-				
 			}
 			else { //check equals method for enumerated types
+				
 				if (currentCard.getCardSuit().equals(trump)) {
 					if(currentCard.getCardValue().getRank() > highestCard.getKey().getCardValue().getRank()) {
 						highestCard = new SimpleEntry<Card, Player>(currentCard, currentPlayer);
-					}
-					
+						winnerPos = i;
+					}					
 				}
-			}
-		
+			}		
 		}
-		this.trickWinner = highestCard.getValue();
 		System.out.println(highestCard);
 		//end of card playing
 		
@@ -53,10 +68,7 @@ public class Trick {
 	  // not need t
 	//this.getWinner()\\\\\\\\\
 	
-	public Player getWinner() {
-		return trickWinner;
-	}
-	
+		
 	public Trick(int numPlayers, Suits trump) {
 		this.trump = trump;
 	}
@@ -73,6 +85,10 @@ public class Trick {
 		return highestCard;
 	}
 	
+	public Player getTrickWinner() {
+		return highestCard.getValue();
+	}
+	
 	public ArrayList<Card> getTrickCards() {
 		return trickCards;
 	}
@@ -84,6 +100,14 @@ public class Trick {
 				return i;
 		}
 		return -1; //error
+	}
+	
+	public int getPoints() {
+		return points;
+	}
+	
+	public int getWinnerPos() {
+		return winnerPos;
 	}
 
 }

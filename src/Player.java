@@ -4,13 +4,12 @@ import java.util.ArrayList;
 public class Player {
 	private String name;
 	private Hand hand;
-	private ArrayList<Card> cardsTaken;
-	private int score;
+	//private ArrayList<Card> cardsTaken; dont need it
+	private int score; //getter/setter score
 	
 	public Player(String name, Hand hand) {
 		this.name = name;
 		this.hand = hand;
-		this.cardsTaken = new ArrayList<Card>();
 		this.score = 0;
 	}
 	
@@ -41,10 +40,8 @@ public class Player {
 		this.hand.remove(c);		
 	}
 	
-	public ArrayList<Card> takeTrick(Trick trick) {
-		this.cardsTaken.addAll(trick.getTrickCards());
-		return trick.getTrickCards();
-		
+	public void takeTrick(Trick trick) {
+		score += trick.getPoints();		
 	}
 	
 	public void pickUpCard(Card c) {

@@ -1,6 +1,6 @@
 import java.util.*;
 
-
+// why would a deck of cards not be a stack, boiii?  more difficult to cut deck.. still worth it, deal card = pop()
 //no duplicates
 public class Deck {
 	private ArrayList<Card> deck;
