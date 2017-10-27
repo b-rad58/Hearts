@@ -2,7 +2,7 @@ import java.util.Objects;
 
 //unicode values for cards https://en.wikipedia.org/wiki/Playing_cards_in_Unicode
 
-//
+// put suit/rank enums within the class
 public class Card { //implements comparable
 	private Suits suit;
 	private Ranks rank;
