@@ -1,80 +1,133 @@
 import java.util.*;
 
-// why would a deck of cards not be a stack, boiii?  more difficult to cut deck.. still worth it, deal card = pop()
-//no duplicates
+/**
+ * The Class Deck represents a standard playing card deck of 
+ * 52 cards.
+ */
 public class Deck {
-	private ArrayList<Card> deck;
 	
+	/** The deck. */
+	private Stack<Card> deck;	
 	
+	/**
+	 * Instantiates a new deck with the standard 52 cards
+	 */
 	public Deck() {
-		this.deck = new ArrayList<Card>(52);
+		this.deck = new Stack<Card>();
 		for (Suits s: Suits.values()) {
 			for (Ranks r: Ranks.values()) {
 				Card card = new Card(r,s);
-				deck.add(card);
+				deck.push(card);
 			}
 		}
-		
-		/*Card card = new Card
-		this.cards[i] = card;
-		*/
-	}
-	public ArrayList<Card> getDeck() {
-		return this.deck;
 	}
 	
+	/**
+	 * Gets the deck.
+	 *
+	 * @return the deck
+	 */
+	public Stack<Card> getDeck() {
+		return deck;
+	}
+	
+	/**
+	 * Prints each card in the deck in rows of 13
+	 */
 	public void printDeck() {
-		for(Card c : this.deck) {
-			System.out.println(c);
+		Stack<Card> tempDeck = new Stack<Card>();
+		tempDeck.addAll(deck);
+		while(tempDeck.size() > 13) {
+			for (int i = 0; i < 13; i++)
+				System.out.print(tempDeck.pop());
+			System.out.println();
 		}
+		while (tempDeck.size() > 0)
+			System.out.print(tempDeck.pop());
+		System.out.println();
+		
 	}
 	
+	/**
+	 * Shuffles the deck
+	 */
 	public void shuffle() {
-		Collections.shuffle(this.deck);
+		Collections.shuffle(deck);
 	}
 	
-   // public '' cutDeck()
-	/*public void shuffle()
-
-	public int cardsLeft()
-
-	public Card dealCard()
-	*/
+    /**
+     * Cut deck, returning a card
+     *
+     * @param min the minimum numbers of cards to be cut off the top of the deck
+     * @param max the maximum number of cards to be cut off the top of the deck
+     * @return the card returned from the cut
+     */
+    public Card cutDeck(int min, int max) {
+    	if (min < 0)
+    		throw new IllegalArgumentException("min value must be greater than 0");
+    	if (max >= deck.size()-1)
+    		throw new IllegalArgumentException("max value must be less than the amount of cards in the deck");
+    	if (min > max)
+    		throw new IllegalArgumentException("min must be less than or equal to max");
+    	Random rand = new Random();
+    	int n = rand.nextInt(max) + 1;
+    	Stack<Card> tempStack = new Stack<Card>();
+    	tempStack.addAll(deck);
+    	for (int i = 0; i < n; i++)
+    		tempStack.pop();
+    	return tempStack.pop();
+    }
+	
+	/**
+	 * Deals the card on top of the deck, removing
+	 * it from the deck
+	 *
+	 * @return the card from the top of the deck
+	 */
+	public Card dealCard() {
+		if (deck.size() > 0) {
+			Card c = deck.pop();
+			return c;
+		}
+		else throw new IllegalStateException("No cards left in deck");		
+	}
 	
 	
-	public void dealCards(int players, int handSize) {//error check
-		if (players*handSize <= 52) {
-			Card[][] hands = new Card[players][handSize];
-			for(int i=0; i<handSize; i++) {
-				for(int j=0; j<players; j++) {
-					hands[j][i] = dealCard();
-				}
+	
+	/**
+	 * Deals cards, one at a time, to each player
+	 *
+	 * @param players the players receiving the cards
+	 * @param handSize the amount of cards being dealt to each player
+	 */
+	public void dealCards(Player[] players, int handSize) {
+		if (players.length*handSize <= deck.size()) {
+			for (int i = 0; i < handSize; i++) {
+				for (Player p: players)
+					p.pickUpCard(dealCard());
 			}
 		}
 		else throw new IllegalStateException("Not enough cards");
 	}
 	
-	public Card dealCard() {
-		//deal one card
-		//@throws IllegalStateException if no more cards are left.
-		if (this.deck.size() >0) {
-			Card c = deck.get(0);
-			deck.remove(0);
-			return c;
-		}
-		else throw new IllegalStateException("No cards left");
 		
-	}
-	
+	/**
+	 * Checks if is empty.
+	 *
+	 * @return true, if is empty
+	 */
 	public boolean isEmpty() {
 		return deck.isEmpty();
 	}
 	
-	public static void main(String[] args) {
-		Deck test = new Deck();
-		test.shuffle();
-		//test.printDeck();
-		System.out.println(test.dealCard());
+	/**
+	 * Size.
+	 *
+	 * @return the int
+	 */
+	public int size() {
+		return deck.size();
 	}
+	
+	
 }
-//https://stackoverflow.com/questions/15942050/deck-of-cards-java
